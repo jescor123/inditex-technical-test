@@ -1,65 +1,70 @@
 package com.inditex.inditex_technical_test.service.impl;
 
 import com.inditex.inditex_technical_test.exception.SpaceShipInternalServerErrorException;
-import com.inditex.inditex_technical_test.model.Album;
-import com.inditex.inditex_technical_test.repository.AlbumRepository;
-import com.inditex.inditex_technical_test.service.AlbumService;
+import com.inditex.inditex_technical_test.model.Photo;
+import com.inditex.inditex_technical_test.repository.PhotoRepository;
+import com.inditex.inditex_technical_test.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
-public class AlbumServiceImpl implements AlbumService {
+public class PhotoServiceImpl implements PhotoService {
+
     @Autowired
-    private AlbumRepository albumRepository;
+    private PhotoRepository photoRepository;
+
     @Autowired
     private WebClient webClient;
 
     @Override
-    public List<Album> findAllAlbums() {
+    public List<Photo> findPhotosById(long id) {
 
-        return albumRepository.findAll();
-
-    }
-
-    @Override
-    public Album saveAlbum(Album album) {
-
-        return albumRepository.save(album);
+        return photoRepository.findPhotosByAlbumId(id);
 
     }
 
     @Override
-    public Flux<Album> getAlbumsFromApi() {
+    public Photo savePhoto(Photo photo) {
 
-        Flux<Album> albums = webClient.get()
-                .uri("/albums")
+        return photoRepository.save(photo);
+
+    }
+
+    @Override
+    public Flux<Photo> getPhotosFromApi() {
+
+        Flux<Photo> photos = webClient.get()
+                .uri("/photos")
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
                         clientResponse -> handleErrorResponse((HttpStatus) clientResponse.statusCode()))
-                .bodyToFlux(Album.class)
+                .bodyToFlux(Photo.class)
                 .onErrorResume(Exception.class, e -> Flux.empty());
 
-        albums.subscribe(album -> {
-            // Process each album in the Flux
-            System.out.println("Album: " + album);
+        photos.subscribe(photo -> {
+            // Process each photo in the Flux
+            System.out.println("Photo: " + photo);
         });
 
-        return albums;
+        return photos;
 
     }
 
     @Override
-    public boolean saveAlbumsFromApi() {
+    public boolean savePhotosFromApi() {
 
-        List<Album> albumList = getAlbumsFromApi().collectList().block();
-        for (Album album: albumList) {
-            saveAlbum(album);
+        List<Photo> photoList = getPhotosFromApi().collectList().block();
+        for (Photo photo: photoList) {
+            savePhoto(photo);
         }
 
         return true;
