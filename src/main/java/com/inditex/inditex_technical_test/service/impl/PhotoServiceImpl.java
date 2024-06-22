@@ -1,19 +1,16 @@
 package com.inditex.inditex_technical_test.service.impl;
 
-import com.inditex.inditex_technical_test.exception.SpaceShipInternalServerErrorException;
+import com.inditex.inditex_technical_test.exception.AlbumDataInternalServerErrorException;
 import com.inditex.inditex_technical_test.model.Photo;
 import com.inditex.inditex_technical_test.repository.PhotoRepository;
 import com.inditex.inditex_technical_test.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -40,7 +37,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public Flux<Photo> getPhotosFromApi() {
+    public List<Photo> getPhotosFromApi() {
 
         Flux<Photo> photos = webClient.get()
                 .uri("/photos")
@@ -55,26 +52,23 @@ public class PhotoServiceImpl implements PhotoService {
             System.out.println("Photo: " + photo);
         });
 
-        return photos;
+        return photos.collectList().block();
 
     }
 
     @Override
-    public boolean savePhotosFromApi() {
+    public void savePhotosFromApi() {
 
-        List<Photo> photoList = getPhotosFromApi().collectList().block();
+        List<Photo> photoList = getPhotosFromApi();
         for (Photo photo: photoList) {
             savePhoto(photo);
         }
-
-        return true;
 
     }
 
     private Mono<? extends Throwable> handleErrorResponse(HttpStatus statusCode) {
 
-        // Handle non-success status codes here (e.g., logging or custom error handling)
-        return Mono.error(new SpaceShipInternalServerErrorException());
+        return Mono.error(new AlbumDataInternalServerErrorException());
 
     }
 

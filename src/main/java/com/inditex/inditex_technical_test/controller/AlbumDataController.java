@@ -1,8 +1,9 @@
 package com.inditex.inditex_technical_test.controller;
 
 import com.inditex.inditex_technical_test.dto.AlbumDTO;
-import com.inditex.inditex_technical_test.exception.SpaceShipInternalServerErrorException;
-import com.inditex.inditex_technical_test.exception.SpaceShipNotContentException;
+import com.inditex.inditex_technical_test.dto.ConfirmationDTO;
+import com.inditex.inditex_technical_test.exception.AlbumDataInternalServerErrorException;
+import com.inditex.inditex_technical_test.exception.AlbumDataNotContentException;
 import com.inditex.inditex_technical_test.service.DataCollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,28 +28,28 @@ public class AlbumDataController {
             if (response != null) {
                 return response;
             } else {
-                throw new SpaceShipNotContentException();
+                throw new AlbumDataNotContentException();
             }
 
         } catch (Exception e) {
-            throw new SpaceShipInternalServerErrorException();
+            throw new AlbumDataInternalServerErrorException();
         }
    }
 
     @GetMapping(value = "/save-albums-in-database", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<String> saveAlbumsInDatabase() {
+    public Mono<ConfirmationDTO> saveAlbumsInDatabase() {
         try {
 
-            String response = dataCollectionService.saveDataInDatabase();
+            Mono<ConfirmationDTO> response = dataCollectionService.saveDataInDatabase();
 
             if (response != null) {
-                return Mono.just(response);
+                return response;
             } else {
-                throw new SpaceShipNotContentException();
+                throw new AlbumDataNotContentException();
             }
 
         } catch (Exception e) {
-            throw new SpaceShipInternalServerErrorException();
+            throw new AlbumDataInternalServerErrorException();
         }
     }
 
@@ -61,11 +62,11 @@ public class AlbumDataController {
             if (response != null) {
                 return response;
             } else {
-                throw new SpaceShipNotContentException();
+                throw new AlbumDataNotContentException();
             }
 
         } catch (Exception e) {
-            throw new SpaceShipInternalServerErrorException();
+            throw new AlbumDataInternalServerErrorException();
         }
     }
 
