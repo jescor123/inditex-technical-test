@@ -1,6 +1,6 @@
 package com.inditex.inditex_technical_test.service.impl;
 
-import com.inditex.inditex_technical_test.exception.SpaceShipInternalServerErrorException;
+import com.inditex.inditex_technical_test.exception.AlbumDataInternalServerErrorException;
 import com.inditex.inditex_technical_test.model.Album;
 import com.inditex.inditex_technical_test.repository.AlbumRepository;
 import com.inditex.inditex_technical_test.service.AlbumService;
@@ -35,7 +35,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public Flux<Album> getAlbumsFromApi() {
+    public List<Album> getAlbumsFromApi() {
 
         Flux<Album> albums = webClient.get()
                 .uri("/albums")
@@ -50,26 +50,23 @@ public class AlbumServiceImpl implements AlbumService {
             System.out.println("Album: " + album);
         });
 
-        return albums;
+        return albums.collectList().block();
 
     }
 
     @Override
-    public boolean saveAlbumsFromApi() {
+    public void saveAlbumsFromApi() {
 
-        List<Album> albumList = getAlbumsFromApi().collectList().block();
+        List<Album> albumList = getAlbumsFromApi();
         for (Album album: albumList) {
             saveAlbum(album);
         }
-
-        return true;
 
     }
 
     private Mono<? extends Throwable> handleErrorResponse(HttpStatus statusCode) {
 
-        // Handle non-success status codes here (e.g., logging or custom error handling)
-        return Mono.error(new SpaceShipInternalServerErrorException());
+        return Mono.error(new AlbumDataInternalServerErrorException());
 
     }
 

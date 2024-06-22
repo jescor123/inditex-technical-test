@@ -1,6 +1,6 @@
 package com.inditex.inditex_technical_test.exception;
 
-public class SpaceShipInternalServerErrorException extends RuntimeException {
+public class AlbumDataNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
 }

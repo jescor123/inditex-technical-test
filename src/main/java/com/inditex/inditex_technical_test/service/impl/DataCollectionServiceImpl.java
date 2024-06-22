@@ -1,18 +1,22 @@
 package com.inditex.inditex_technical_test.service.impl;
 
 import com.inditex.inditex_technical_test.dto.AlbumDTO;
-import com.inditex.inditex_technical_test.dto.PhotoDTO;
+import com.inditex.inditex_technical_test.dto.ConfirmationDTO;
+import com.inditex.inditex_technical_test.mapper.AlbumMapper;
+import com.inditex.inditex_technical_test.mapper.PhotoMapper;
 import com.inditex.inditex_technical_test.model.Album;
 import com.inditex.inditex_technical_test.model.Photo;
 import com.inditex.inditex_technical_test.service.AlbumService;
 import com.inditex.inditex_technical_test.service.DataCollectionService;
 import com.inditex.inditex_technical_test.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DataCollectionServiceImpl implements DataCollectionService {
@@ -24,82 +28,40 @@ public class DataCollectionServiceImpl implements DataCollectionService {
     @Override
     public Flux<AlbumDTO> getDataFromDatabase() {
 
-        List<AlbumDTO> albumDTOList = new ArrayList<>();
-
-        List<Album> albumList = albumService.findAllAlbums();
-        for (Album album : albumList) {
-
-            List<PhotoDTO> photoDTOList = new ArrayList<>();
-
-            List<Photo> photoList = photoService.findPhotosById(album.getId());
-            for (Photo photo : photoList) {
-                PhotoDTO photoDTO = new PhotoDTO();
-                photoDTO.setId(photo.getId());
-                photoDTO.setAlbumId(photo.getAlbumId());
-                photoDTO.setTitle(photo.getTitle());
-                photoDTO.setUrl(photo.getUrl());
-                photoDTO.setThumbnailUrl(photo.getThumbnailUrl());
-                photoDTOList.add(photoDTO);
-            }
-
-            AlbumDTO albumDTO = new AlbumDTO();
-            albumDTO.setId(album.getId());
-            albumDTO.setUserId(album.getUserId());
-            albumDTO.setTitle(album.getTitle());
-            albumDTO.setPhotoList(photoDTOList);
-            albumDTOList.add(albumDTO);
-
-        }
-
-        return Flux.fromIterable(albumDTOList);
+        return Flux.fromIterable(albumService.findAllAlbums().stream()
+                .map(album -> AlbumMapper.mapToAlbumDto(album,
+                        photoService.findPhotosById(album.getId()).stream()
+                                .map(photo -> PhotoMapper.mapToPhotoDto(photo))
+                                .collect(Collectors.toList())))
+                .collect(Collectors.toList()));
 
     }
 
     @Override
-    public String saveDataInDatabase() {
+    public Mono<ConfirmationDTO> saveDataInDatabase() {
 
-        if(albumService.saveAlbumsFromApi()){
-            if (photoService.savePhotosFromApi()){
-                return "200";
-            }
+        try {
+            albumService.saveAlbumsFromApi();
+            photoService.savePhotosFromApi();
+            return Mono.just(new ConfirmationDTO(String.valueOf(HttpStatus.OK), HttpStatus.OK.name()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return "500";
 
     }
 
     @Override
     public Flux<AlbumDTO> getAlbumsFromApi() {
 
-        List<AlbumDTO> albumDTOList = new ArrayList<>();
+        List<Album> albumList = albumService.getAlbumsFromApi();
+        List<Photo> photoList =  photoService.getPhotosFromApi();
 
-        List<Album> albumList = albumService.getAlbumsFromApi().collectList().block();
-        for (Album album : albumList) {
-
-            List<PhotoDTO> photoDTOList = new ArrayList<>();
-
-            List<Photo> photoList = photoService.getPhotosFromApi().collectList().block();
-            for (Photo photo : photoList) {
-                if (photo.getAlbumId() == album.getId()) {
-                    PhotoDTO photoDTO = new PhotoDTO();
-                    photoDTO.setId(photo.getId());
-                    photoDTO.setAlbumId(photo.getAlbumId());
-                    photoDTO.setTitle(photo.getTitle());
-                    photoDTO.setUrl(photo.getUrl());
-                    photoDTO.setThumbnailUrl(photo.getThumbnailUrl());
-                    photoDTOList.add(photoDTO);
-                }
-            }
-
-            AlbumDTO albumDTO = new AlbumDTO();
-            albumDTO.setId(album.getId());
-            albumDTO.setUserId(album.getUserId());
-            albumDTO.setTitle(album.getTitle());
-            albumDTO.setPhotoList(photoDTOList);
-            albumDTOList.add(albumDTO);
-
-        }
-
-        return Flux.fromIterable(albumDTOList);
+        return Flux.fromIterable(albumList.stream()
+                .map(album -> AlbumMapper.mapToAlbumDto(album,
+                        photoList.stream().filter(photo -> photo.getAlbumId() == album.getId())
+                                .map(photo -> PhotoMapper.mapToPhotoDto(photo))
+                                .collect(Collectors.toList())))
+                .collect(Collectors.toList()));
 
     }
 
