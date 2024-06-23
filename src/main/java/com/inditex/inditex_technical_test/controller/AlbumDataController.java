@@ -4,6 +4,7 @@ import com.inditex.inditex_technical_test.dto.AlbumDTO;
 import com.inditex.inditex_technical_test.dto.ConfirmationDTO;
 import com.inditex.inditex_technical_test.exception.AlbumDataInternalServerErrorException;
 import com.inditex.inditex_technical_test.exception.AlbumDataNotContentException;
+import com.inditex.inditex_technical_test.exception.AlbumSQLErrorServiceException;
 import com.inditex.inditex_technical_test.service.DataCollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -32,7 +33,7 @@ public class AlbumDataController {
             }
 
         } catch (Exception e) {
-            throw new AlbumDataInternalServerErrorException();
+            throw new AlbumSQLErrorServiceException();
         }
    }
 
@@ -49,7 +50,7 @@ public class AlbumDataController {
             }
 
         } catch (Exception e) {
-            throw new AlbumDataInternalServerErrorException();
+            throw new AlbumSQLErrorServiceException();
         }
     }
 

@@ -40,13 +40,9 @@ public class DataCollectionServiceImpl implements DataCollectionService {
     @Override
     public Mono<ConfirmationDTO> saveDataInDatabase() {
 
-        try {
-            albumService.saveAlbumsFromApi();
-            photoService.savePhotosFromApi();
-            return Mono.just(new ConfirmationDTO(String.valueOf(HttpStatus.OK), HttpStatus.OK.name()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        albumService.saveAlbumsFromApi();
+        photoService.savePhotosFromApi();
+        return Mono.just(new ConfirmationDTO(String.valueOf(HttpStatus.OK), HttpStatus.OK.name()));
 
     }
 
