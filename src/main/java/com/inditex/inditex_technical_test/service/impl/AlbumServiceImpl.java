@@ -11,7 +11,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class AlbumServiceImpl implements AlbumService {
@@ -21,9 +22,9 @@ public class AlbumServiceImpl implements AlbumService {
     private WebClient webClient;
 
     @Override
-    public List<Album> findAllAlbums() {
+    public Set<Album> findAllAlbums() {
 
-        return albumRepository.findAll();
+        return new HashSet<>(albumRepository.findAll());
 
     }
 
@@ -35,7 +36,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public List<Album> getAlbumsFromApi() {
+    public Set<Album> getAlbumsFromApi() {
 
         Flux<Album> albums = webClient.get()
                 .uri("/albums")
@@ -50,17 +51,14 @@ public class AlbumServiceImpl implements AlbumService {
             System.out.println("Album: " + album);
         });
 
-        return albums.collectList().block();
+        return new HashSet<>(albums.collectList().block());
 
     }
 
     @Override
     public void saveAlbumsFromApi() {
 
-        List<Album> albumList = getAlbumsFromApi();
-        for (Album album: albumList) {
-            saveAlbum(album);
-        }
+        getAlbumsFromApi().stream().forEach(album -> saveAlbum(album));
 
     }
 

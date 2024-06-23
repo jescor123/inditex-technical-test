@@ -7,10 +7,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
     @Query("SELECT p FROM Photo p WHERE p.albumId = :id")
-    List<Photo> findPhotosByAlbumId(@Param("id") long id);
+    Set<Photo> findPhotosByAlbumId(@Param("id") long id);
 
 }

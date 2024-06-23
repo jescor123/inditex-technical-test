@@ -3,21 +3,20 @@ package com.inditex.inditex_technical_test.mapper;
 import com.inditex.inditex_technical_test.dto.AlbumDTO;
 import com.inditex.inditex_technical_test.dto.PhotoDTO;
 import com.inditex.inditex_technical_test.model.Album;
-import com.inditex.inditex_technical_test.model.Photo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AlbumMapperTest {
 
     private Album albumToCompare;
     private AlbumDTO albumDTOtoCompare;
 
-    private List<PhotoDTO> photoList = new ArrayList<>();
+    private Set<PhotoDTO> photoList = new HashSet<>();
 
     @BeforeEach
     public void setUp() {
