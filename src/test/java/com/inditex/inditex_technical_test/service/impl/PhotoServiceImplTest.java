@@ -9,9 +9,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,7 +26,10 @@ class PhotoServiceImplTest {
     @Mock
     private PhotoRepository photoRepository;
 
-    private List<Photo> photoList = new ArrayList<>();
+    @Mock
+    private WebClient webClient;
+
+    private Set<Photo> photoList = new HashSet<>();
 
     private Photo phototoSave = new Photo(1, 1, "XXX", "XXX", "XXX");
 
@@ -61,9 +65,9 @@ class PhotoServiceImplTest {
     }
 
     @Test
-    void findPhotosById() {
+    void test_findPhotosById() {
 
-        List<Photo> list = new ArrayList<>();
+        Set<Photo> list = new HashSet<>();
         list.add(new Photo(1, 1, "XXX", "XXX", "XXX"));
         list.add(new Photo(2, 1, "XXX", "XXX", "XXX"));
         list.add(new Photo(3, 1, "XXX", "XXX", "XXX"));
@@ -71,16 +75,11 @@ class PhotoServiceImplTest {
         Mockito.when(photoRepository.findPhotosByAlbumId(1)).thenReturn(photoList);
         var photosFromDB = photoService.findPhotosById(1);
         assertTrue(photosFromDB.equals(list));
-        assertEquals(photosFromDB.get(0).getId(), 1);
-        assertEquals(photosFromDB.get(0).getAlbumId(), 1);
-        assertEquals(photosFromDB.get(0).getTitle(), "XXX");
-        assertEquals(photosFromDB.get(0).getUrl(), "XXX");
-        assertEquals(photosFromDB.get(0).getThumbnailUrl(), "XXX");
 
     }
 
     @Test
-    void savePhotosFromApi() {
+    void test_savePhotosFromApi() {
 
         Photo photo = new Photo(1, 1, "XXX", "XXX", "XXX");
         Mockito.when(photoRepository.save(photo)).thenReturn(photo);
@@ -92,4 +91,5 @@ class PhotoServiceImplTest {
         assertEquals(photoFromDB.getThumbnailUrl(), photo.getThumbnailUrl());
 
     }
+
 }

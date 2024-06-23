@@ -11,7 +11,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class PhotoServiceImpl implements PhotoService {
@@ -23,7 +24,7 @@ public class PhotoServiceImpl implements PhotoService {
     private WebClient webClient;
 
     @Override
-    public List<Photo> findPhotosById(long id) {
+    public Set<Photo> findPhotosById(long id) {
 
         return photoRepository.findPhotosByAlbumId(id);
 
@@ -37,7 +38,7 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public List<Photo> getPhotosFromApi() {
+    public Set<Photo> getPhotosFromApi() {
 
         Flux<Photo> photos = webClient.get()
                 .uri("/photos")
@@ -52,17 +53,14 @@ public class PhotoServiceImpl implements PhotoService {
             System.out.println("Photo: " + photo);
         });
 
-        return photos.collectList().block();
+        return new HashSet<>(photos.collectList().block());
 
     }
 
     @Override
     public void savePhotosFromApi() {
 
-        List<Photo> photoList = getPhotosFromApi();
-        for (Photo photo: photoList) {
-            savePhoto(photo);
-        }
+        getPhotosFromApi().stream().forEach(photo -> savePhoto(photo));
 
     }
 

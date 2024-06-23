@@ -1,6 +1,5 @@
 package com.inditex.inditex_technical_test.service.impl;
 
-import com.inditex.inditex_technical_test.dto.AlbumDTO;
 import com.inditex.inditex_technical_test.model.Album;
 import com.inditex.inditex_technical_test.repository.AlbumRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,10 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -57,7 +57,7 @@ class AlbumServiceImplTest {
     @Test
     void test_when_findAllAlbums_Is_Ok() {
 
-        List<Album> list = new ArrayList<>();
+        Set<Album> list = new HashSet<>();
         list.add(new Album(1, 1, "XXX"));
         list.add(new Album(2, 1, "XXX"));
         list.add(new Album(3, 1, "XXX"));
@@ -65,9 +65,6 @@ class AlbumServiceImplTest {
         Mockito.when(albumRepository.findAll()).thenReturn(albumList);
         var albumsFromDB = albumService.findAllAlbums();
         assertTrue(albumsFromDB.equals(list));
-        assertEquals(albumsFromDB.get(0).getId(), 1);
-        assertEquals(albumsFromDB.get(0).getUserId(), 1);
-        assertEquals(albumsFromDB.get(0).getTitle(), "XXX");
 
     }
 

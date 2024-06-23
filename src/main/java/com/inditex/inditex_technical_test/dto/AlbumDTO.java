@@ -1,12 +1,11 @@
 package com.inditex.inditex_technical_test.dto;
 
 
-import com.inditex.inditex_technical_test.model.Photo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,6 +14,6 @@ public class AlbumDTO {
     private long id;
     private long userId;
     private String title;
-    private List<PhotoDTO> photoList;
+    private Set<PhotoDTO> photoList;
 
 }
