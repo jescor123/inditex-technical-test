@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,6 +14,6 @@ public class AlbumDTO {
     private long id;
     private long userId;
     private String title;
-    private Set<PhotoDTO> photoList;
+    private List<PhotoDTO> photoList;
 
 }

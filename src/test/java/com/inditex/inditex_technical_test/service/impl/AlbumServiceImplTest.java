@@ -10,10 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -57,7 +54,7 @@ class AlbumServiceImplTest {
     @Test
     void test_when_findAllAlbums_Is_Ok() {
 
-        Set<Album> list = new HashSet<>();
+        Set<Album> list = new LinkedHashSet<>();
         list.add(new Album(1, 1, "XXX"));
         list.add(new Album(2, 1, "XXX"));
         list.add(new Album(3, 1, "XXX"));

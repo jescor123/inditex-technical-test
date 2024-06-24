@@ -11,7 +11,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +31,7 @@ class PhotoServiceImplTest {
     @Mock
     private WebClient webClient;
 
-    private Set<Photo> photoList = new HashSet<>();
+    private List<Photo> photoList = new ArrayList<>();
 
     private Photo phototoSave = new Photo(1, 1, "XXX", "XXX", "XXX");
 
@@ -67,7 +69,7 @@ class PhotoServiceImplTest {
     @Test
     void test_findPhotosById() {
 
-        Set<Photo> list = new HashSet<>();
+        List<Photo> list = new ArrayList<>();
         list.add(new Photo(1, 1, "XXX", "XXX", "XXX"));
         list.add(new Photo(2, 1, "XXX", "XXX", "XXX"));
         list.add(new Photo(3, 1, "XXX", "XXX", "XXX"));

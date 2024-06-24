@@ -6,8 +6,8 @@ import com.inditex.inditex_technical_test.model.Album;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,7 +16,7 @@ class AlbumMapperTest {
     private Album albumToCompare;
     private AlbumDTO albumDTOtoCompare;
 
-    private Set<PhotoDTO> photoList = new HashSet<>();
+    private List<PhotoDTO> photoList = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {

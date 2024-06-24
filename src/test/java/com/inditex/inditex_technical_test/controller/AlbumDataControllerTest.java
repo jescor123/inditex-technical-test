@@ -16,7 +16,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.mockito.Mockito.when;
@@ -33,7 +34,7 @@ class AlbumDataControllerTest {
     @InjectMocks
     private AlbumDataController albumDataController;
 
-    private Set<AlbumDTO> albumDTOList = new HashSet<>();
+    private Set<AlbumDTO> albumDTOList = new LinkedHashSet<>();
 
     private Flux<AlbumDTO> albumDTOFlux = null;
 
@@ -49,19 +50,19 @@ class AlbumDataControllerTest {
         albumDTO1.setId(1);
         albumDTO1.setUserId(1);
         albumDTO1.setTitle("XXX");
-        albumDTO1.setPhotoList(new HashSet<>());
+        albumDTO1.setPhotoList(new ArrayList<>());
 
         AlbumDTO albumDTO2 = new AlbumDTO();
         albumDTO2.setId(2);
         albumDTO2.setUserId(1);
         albumDTO2.setTitle("XXX");
-        albumDTO2.setPhotoList(new HashSet<>());
+        albumDTO2.setPhotoList(new ArrayList<>());
 
         AlbumDTO albumDTO3 = new AlbumDTO();
         albumDTO3.setId(3);
         albumDTO3.setUserId(1);
         albumDTO3.setTitle("XXX");
-        albumDTO3.setPhotoList(new HashSet<>());
+        albumDTO3.setPhotoList(new ArrayList<>());
 
         albumDTOList.add(albumDTO1);
         albumDTOList.add(albumDTO2);

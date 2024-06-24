@@ -4,10 +4,10 @@ import com.inditex.inditex_technical_test.dto.AlbumDTO;
 import com.inditex.inditex_technical_test.dto.PhotoDTO;
 import com.inditex.inditex_technical_test.model.Album;
 
-import java.util.Set;
+import java.util.List;
 
 public class AlbumMapper {
-    public static AlbumDTO mapToAlbumDto(Album album, Set<PhotoDTO> photoList){
+    public static AlbumDTO mapToAlbumDto(Album album, List<PhotoDTO> photoList){
         AlbumDTO albumDTO = new AlbumDTO(
                 album.getId(),
                 album.getUserId(),

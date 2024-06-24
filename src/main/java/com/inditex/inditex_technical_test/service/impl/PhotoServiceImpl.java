@@ -5,14 +5,12 @@ import com.inditex.inditex_technical_test.model.Photo;
 import com.inditex.inditex_technical_test.repository.PhotoRepository;
 import com.inditex.inditex_technical_test.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class PhotoServiceImpl implements PhotoService {
@@ -24,7 +22,7 @@ public class PhotoServiceImpl implements PhotoService {
     private WebClient webClient;
 
     @Override
-    public Set<Photo> findPhotosById(long id) {
+    public List<Photo> findPhotosById(long id) {
 
         return photoRepository.findPhotosByAlbumId(id);
 
@@ -44,7 +42,7 @@ public class PhotoServiceImpl implements PhotoService {
                 .uri("/photos")
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
-                        clientResponse -> handleErrorResponse((HttpStatus) clientResponse.statusCode()))
+                        clientResponse -> Mono.error(new AlbumDataInternalServerErrorException()))
                 .bodyToFlux(Photo.class)
                 .onErrorResume(Exception.class, e -> Flux.empty());
 
@@ -53,7 +51,8 @@ public class PhotoServiceImpl implements PhotoService {
             System.out.println("Photo: " + photo);
         });
 
-        return new HashSet<>(photos.collectList().block());
+        return new LinkedHashSet<>(new ArrayList<>(
+                Objects.requireNonNull(photos.collectList().block())));
 
     }
 
@@ -64,10 +63,5 @@ public class PhotoServiceImpl implements PhotoService {
 
     }
 
-    private Mono<? extends Throwable> handleErrorResponse(HttpStatus statusCode) {
-
-        return Mono.error(new AlbumDataInternalServerErrorException());
-
-    }
 
 }

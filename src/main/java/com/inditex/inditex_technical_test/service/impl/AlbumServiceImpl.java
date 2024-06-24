@@ -5,14 +5,12 @@ import com.inditex.inditex_technical_test.model.Album;
 import com.inditex.inditex_technical_test.repository.AlbumRepository;
 import com.inditex.inditex_technical_test.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class AlbumServiceImpl implements AlbumService {
@@ -24,7 +22,7 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public Set<Album> findAllAlbums() {
 
-        return new HashSet<>(albumRepository.findAll());
+        return new LinkedHashSet<>(albumRepository.findAll());
 
     }
 
@@ -42,7 +40,7 @@ public class AlbumServiceImpl implements AlbumService {
                 .uri("/albums")
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
-                        clientResponse -> handleErrorResponse((HttpStatus) clientResponse.statusCode()))
+                        clientResponse -> Mono.error(new AlbumDataInternalServerErrorException()))
                 .bodyToFlux(Album.class)
                 .onErrorResume(Exception.class, e -> Flux.empty());
 
@@ -51,7 +49,8 @@ public class AlbumServiceImpl implements AlbumService {
             System.out.println("Album: " + album);
         });
 
-        return new HashSet<>(albums.collectList().block());
+        return new LinkedHashSet<>(new ArrayList<>(
+                Objects.requireNonNull(albums.collectList().block())));
 
     }
 
@@ -62,10 +61,5 @@ public class AlbumServiceImpl implements AlbumService {
 
     }
 
-    private Mono<? extends Throwable> handleErrorResponse(HttpStatus statusCode) {
-
-        return Mono.error(new AlbumDataInternalServerErrorException());
-
-    }
 
 }
