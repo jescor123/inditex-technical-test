@@ -34,8 +34,8 @@ public class DataCollectionServiceImpl implements DataCollectionService {
                     .map(album -> AlbumMapper.mapToAlbumDto(album,
                             photoService.findPhotosById(album.getId()).stream()
                                     .map(photo -> PhotoMapper.mapToPhotoDto(photo))
-                                    .collect(Collectors.toSet())))
-                    .collect(Collectors.toSet()));
+                                    .collect(Collectors.toList())))
+                    .collect(Collectors.toList()));
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -69,8 +69,8 @@ public class DataCollectionServiceImpl implements DataCollectionService {
                     .map(album -> AlbumMapper.mapToAlbumDto(album,
                             photoList.stream().filter(photo -> photo.getAlbumId() == album.getId())
                                     .map(photo -> PhotoMapper.mapToPhotoDto(photo))
-                                    .collect(Collectors.toSet())))
-                    .collect(Collectors.toSet()));
+                                    .collect(Collectors.toList())))
+                    .collect(Collectors.toList()));
 
         } catch (Exception e) {
             throw new RuntimeException(e);
