@@ -4,22 +4,27 @@ import com.inditex.inditex_technical_test.exception.AlbumDataInternalServerError
 import com.inditex.inditex_technical_test.model.Photo;
 import com.inditex.inditex_technical_test.repository.PhotoRepository;
 import com.inditex.inditex_technical_test.service.PhotoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PhotoServiceImpl implements PhotoService {
 
-    @Autowired
     private PhotoRepository photoRepository;
-
-    @Autowired
     private WebClient webClient;
+
+    @Value("${inditex.api.uri2}")
+    private String apiUri;
+    public PhotoServiceImpl(PhotoRepository photoRepository, WebClient webClient) {
+        this.photoRepository = photoRepository;
+        this.webClient = webClient;
+    }
 
     @Override
     public List<Photo> findPhotosById(long id) {
@@ -29,37 +34,34 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public Photo savePhoto(Photo photo) {
+    public List<Photo> savePhotos(Set<Photo> photoSet) {
 
-        return photoRepository.save(photo);
+        return photoRepository.saveAll(photoSet);
 
     }
 
     @Override
     public Set<Photo> getPhotosFromApi() {
 
-        Flux<Photo> photos = webClient.get()
-                .uri("/photos")
+        Flux<Photo> photoFlux = webClient.get()
+                .uri(apiUri)
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
                         clientResponse -> Mono.error(new AlbumDataInternalServerErrorException()))
                 .bodyToFlux(Photo.class)
-                .onErrorResume(Exception.class, e -> Flux.empty());
+                .onErrorResume(Exception.class, exception -> Flux.empty());
 
-        photos.subscribe(photo -> {
-            // Process each photo in the Flux
-            System.out.println("Photo: " + photo);
-        });
+        photoFlux.subscribe();
 
         return new LinkedHashSet<>(new ArrayList<>(
-                Objects.requireNonNull(photos.collectList().block())));
+                Objects.requireNonNull(photoFlux.collectList().block())));
 
     }
 
     @Override
     public void savePhotosFromApi() {
 
-        getPhotosFromApi().stream().forEach(photo -> savePhoto(photo));
+        savePhotos(getPhotosFromApi().stream().collect(Collectors.toSet()));
 
     }
 

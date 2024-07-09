@@ -15,7 +15,6 @@ class AlbumMapperTest {
 
     private Album albumToCompare;
     private AlbumDTO albumDTOtoCompare;
-
     private List<PhotoDTO> photoList = new ArrayList<>();
 
     @BeforeEach

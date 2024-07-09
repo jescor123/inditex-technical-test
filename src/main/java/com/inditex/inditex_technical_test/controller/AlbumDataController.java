@@ -5,7 +5,6 @@ import com.inditex.inditex_technical_test.dto.ConfirmationDTO;
 import com.inditex.inditex_technical_test.exception.AlbumDataInternalServerErrorException;
 import com.inditex.inditex_technical_test.exception.AlbumDataNotContentException;
 import com.inditex.inditex_technical_test.service.DataCollectionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,12 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/v2")
 public class AlbumDataController {
-    @Autowired
-    DataCollectionService dataCollectionService;
+
+    private DataCollectionService dataCollectionService;
+
+    public AlbumDataController(DataCollectionService dataCollectionService) {
+        this.dataCollectionService = dataCollectionService;
+    }
 
     @GetMapping(value = "/albums-from-h2", produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<AlbumDTO> getAlbumsFromDatabase() {
@@ -32,7 +35,7 @@ public class AlbumDataController {
             }
 
         } catch (Exception e) {
-            throw new AlbumDataInternalServerErrorException(e.getMessage());
+            throw new AlbumDataInternalServerErrorException();
         }
    }
 
@@ -66,7 +69,7 @@ public class AlbumDataController {
             }
 
         } catch (Exception e) {
-            throw new AlbumDataInternalServerErrorException(e.getMessage());
+            throw new AlbumDataInternalServerErrorException();
         }
     }
 
