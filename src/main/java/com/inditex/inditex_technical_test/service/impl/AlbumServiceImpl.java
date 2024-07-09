@@ -4,20 +4,25 @@ import com.inditex.inditex_technical_test.exception.AlbumDataInternalServerError
 import com.inditex.inditex_technical_test.model.Album;
 import com.inditex.inditex_technical_test.repository.AlbumRepository;
 import com.inditex.inditex_technical_test.service.AlbumService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AlbumServiceImpl implements AlbumService {
-    @Autowired
     private AlbumRepository albumRepository;
-    @Autowired
     private WebClient webClient;
+    @Value("${inditex.api.uri1}")
+    private String apiUri;
+    public AlbumServiceImpl(AlbumRepository albumRepository, WebClient webClient) {
+        this.albumRepository = albumRepository;
+        this.webClient = webClient;
+    }
 
     @Override
     public Set<Album> findAllAlbums() {
@@ -27,37 +32,34 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public Album saveAlbum(Album album) {
+    public List<Album> saveAlbums(Set<Album> albumSet) {
 
-        return albumRepository.save(album);
+        return albumRepository.saveAll(albumSet);
 
     }
 
     @Override
     public Set<Album> getAlbumsFromApi() {
 
-        Flux<Album> albums = webClient.get()
-                .uri("/albums")
+        Flux<Album> albumFlux = webClient.get()
+                .uri(apiUri)
                 .retrieve()
                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
                         clientResponse -> Mono.error(new AlbumDataInternalServerErrorException()))
                 .bodyToFlux(Album.class)
-                .onErrorResume(Exception.class, e -> Flux.empty());
+                .onErrorResume(Exception.class, exception -> Flux.empty());
 
-        albums.subscribe(album -> {
-            // Process each album in the Flux
-            System.out.println("Album: " + album);
-        });
+        albumFlux.subscribe();
 
         return new LinkedHashSet<>(new ArrayList<>(
-                Objects.requireNonNull(albums.collectList().block())));
+                 Objects.requireNonNull(albumFlux.collectList().block())));
 
     }
 
     @Override
     public void saveAlbumsFromApi() {
 
-        getAlbumsFromApi().stream().forEach(album -> saveAlbum(album));
+        saveAlbums(getAlbumsFromApi().stream().collect(Collectors.toSet()));
 
     }
 

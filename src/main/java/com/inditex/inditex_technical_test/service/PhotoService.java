@@ -9,7 +9,7 @@ import java.util.Set;
 @Service
 public interface PhotoService {
     List<Photo> findPhotosById(long id);
-    Photo savePhoto(Photo photo);
+    List<Photo> savePhotos(Set<Photo> photoSet);
     Set<Photo> getPhotosFromApi();
     void savePhotosFromApi();
 
