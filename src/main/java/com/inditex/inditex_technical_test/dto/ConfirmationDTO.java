@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class ConfirmationDTO {
-
     private String code;
-
     private String description;
 
 }

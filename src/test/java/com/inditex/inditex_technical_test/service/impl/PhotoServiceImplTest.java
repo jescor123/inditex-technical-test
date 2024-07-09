@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class PhotoServiceImplTest {
@@ -28,12 +26,9 @@ class PhotoServiceImplTest {
     @Mock
     private PhotoRepository photoRepository;
 
-    @Mock
-    private WebClient webClient;
+    private Set<Photo> photoSet = new LinkedHashSet<>();
 
     private List<Photo> photoList = new ArrayList<>();
-
-    private Photo phototoSave = new Photo(1, 1, "XXX", "XXX", "XXX");
 
 
     @BeforeEach
@@ -64,6 +59,10 @@ class PhotoServiceImplTest {
         photoList.add(photo2);
         photoList.add(photo3);
 
+        photoSet.add(photo1);
+        photoSet.add(photo2);
+        photoSet.add(photo3);
+
     }
 
     @Test
@@ -76,21 +75,25 @@ class PhotoServiceImplTest {
 
         Mockito.when(photoRepository.findPhotosByAlbumId(1)).thenReturn(photoList);
         var photosFromDB = photoService.findPhotosById(1);
-        assertTrue(photosFromDB.equals(list));
+        assertEquals(photosFromDB, list);
 
     }
 
     @Test
     void test_savePhotosFromApi() {
 
-        Photo photo = new Photo(1, 1, "XXX", "XXX", "XXX");
-        Mockito.when(photoRepository.save(photo)).thenReturn(photo);
-        var photoFromDB = photoService.savePhoto(phototoSave);
-        assertEquals(photoFromDB.getId(), photo.getId());
-        assertEquals(photoFromDB.getAlbumId(), photo.getAlbumId());
-        assertEquals(photoFromDB.getTitle(), photo.getTitle());
-        assertEquals(photoFromDB.getUrl(), photo.getUrl());
-        assertEquals(photoFromDB.getThumbnailUrl(), photo.getThumbnailUrl());
+        List<Photo> list = new ArrayList<>();
+        list.add(new Photo(1, 1, "XXX", "XXX", "XXX"));
+        list.add(new Photo(2, 1, "XXX", "XXX", "XXX"));
+        list.add(new Photo(3, 1, "XXX", "XXX", "XXX"));
+
+        Mockito.when(photoRepository.saveAll(photoSet)).thenReturn(list);
+        var photoFromDB = photoService.savePhotos(photoSet);
+        assertEquals(photoFromDB.get(0).getId(), list.get(0).getId());
+        assertEquals(photoFromDB.get(0).getAlbumId(), list.get(0).getAlbumId());
+        assertEquals(photoFromDB.get(0).getTitle(), list.get(0).getTitle());
+        assertEquals(photoFromDB.get(0).getUrl(), list.get(0).getUrl());
+        assertEquals(photoFromDB.get(0).getThumbnailUrl(), list.get(0).getThumbnailUrl());
 
     }
 

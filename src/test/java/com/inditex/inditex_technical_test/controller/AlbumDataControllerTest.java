@@ -1,7 +1,5 @@
 package com.inditex.inditex_technical_test.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.inditex.inditex_technical_test.dto.AlbumDTO;
 import com.inditex.inditex_technical_test.dto.ConfirmationDTO;
 import com.inditex.inditex_technical_test.service.DataCollectionService;
@@ -10,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import reactor.core.publisher.Flux;
@@ -26,7 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AlbumDataControllerTest {
-    private ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     private MockMvc mockMvc;
     @Mock
     private DataCollectionService dataCollectionService;
@@ -43,7 +39,7 @@ class AlbumDataControllerTest {
     @BeforeEach
     public void setup() {
 
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(albumDataController).build();
 
         AlbumDTO albumDTO1 = new AlbumDTO();
@@ -79,7 +75,7 @@ class AlbumDataControllerTest {
     void test_when_getAlbumsFromDatabase_Is_Ok() throws Exception {
 
         when(dataCollectionService.getDataFromDatabase()).thenReturn(albumDTOFlux);
-        mockMvc.perform(get("/v2/albums-from-h2").accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+        mockMvc.perform(get("/v2/albums-from-h2"))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful());
 
@@ -89,7 +85,7 @@ class AlbumDataControllerTest {
     void test_when_saveAlbumsInDatabase_Is_Ok() throws Exception {
 
         when(dataCollectionService.saveDataInDatabase()).thenReturn(Mono.just(confirmationDTO));
-        mockMvc.perform(get("/v2/save-albums-in-database").accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+        mockMvc.perform(get("/v2/save-albums-in-database"))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful());
 
