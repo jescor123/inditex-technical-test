@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,7 +30,6 @@ public class FilesController {
         String message = "";
         try {
             storageService.save(file);
-
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
@@ -49,6 +49,17 @@ public class FilesController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK).body(fileInfos);
+    }
+
+    @GetMapping("/fileByName")
+    public ResponseEntity<Optional<FileInfo>> getListFileByName(@RequestParam("filename") String filename) {
+        Optional<FileInfo> fileInfo = storageService.loadAll().map(path -> {
+            String url = MvcUriComponentsBuilder
+                    .fromMethodName(FilesController.class, "getFile", filename).build().toString();
+            return new FileInfo(filename, url);
+        }).findAny();
+
+        return ResponseEntity.status(HttpStatus.OK).body(fileInfo);
     }
 
     @GetMapping("/files/{filename:.+}")

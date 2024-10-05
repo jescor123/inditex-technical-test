@@ -10,7 +10,8 @@ public class LanguageMapper {
     private LanguageMapper() {}
 
     public static LanguageDTO mapToLanguageDto(Language language, List<AnswerDTO> answerDTOList, List<CategoryDTO> catAnswerDTOList,
-                                               List<QuestionDTO> questionDTOList, List<ComboBoxOptionDTO> comboBoxOptionDTOList) {
+                                               List<QuestionDTO> questionDTOList, List<ComboBoxOptionDTO> comboBoxOptionDTOList,
+                                               List<CheckBoxOptionDTO> checkBoxOptionDTOList) {
 
         return new LanguageDTO(
                 language.getId(),
@@ -19,6 +20,7 @@ public class LanguageMapper {
                 catAnswerDTOList,
                 questionDTOList,
                 comboBoxOptionDTOList,
+                checkBoxOptionDTOList,
                 language.getLastUpdate()
         );
 

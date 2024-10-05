@@ -17,6 +17,7 @@ public class LanguageDTO {
     private List<CategoryDTO> categoryDTOList;
     private List<QuestionDTO> questionDTOList;
     private List<ComboBoxOptionDTO> comboBoxOptionDTOList;
+    private List<CheckBoxOptionDTO> checkBoxOptionDTOList;
     private Timestamp lastUpdate;
 
 }

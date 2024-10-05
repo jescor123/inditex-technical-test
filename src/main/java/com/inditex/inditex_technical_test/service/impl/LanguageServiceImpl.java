@@ -26,16 +26,20 @@ public class LanguageServiceImpl implements LanguageService {
 
     private ComboBoxOptionRepository comboBoxOptionRepository;
 
+    private CheckBoxOptionRepository checkBoxOptionRepository;
+
     @Autowired
     public LanguageServiceImpl(LanguageRepository languageRepository, AnswerRepository answerRepository,
                                CategoryRepository categoryRepository, QuestionRepository questionRepository,
-                               ComboBoxOptionRepository comboBoxOptionRepository) {
+                               ComboBoxOptionRepository comboBoxOptionRepository,
+                               CheckBoxOptionRepository checkBoxOptionRepository) {
 
         this.languageRepository = languageRepository;
         this.answerRepository = answerRepository;
         this.categoryRepository = categoryRepository;
         this.questionRepository = questionRepository;
         this.comboBoxOptionRepository = comboBoxOptionRepository;
+        this.checkBoxOptionRepository = checkBoxOptionRepository;
 
     }
 
@@ -47,7 +51,8 @@ public class LanguageServiceImpl implements LanguageService {
                         List.copyOf(answerRepository.findAll().stream().map(AnswerMapper::mapToAnswerDto).toList()),
                         List.copyOf(categoryRepository.findAll().stream().map(CategoryMapper::mapToCategoryDto).toList()),
                         List.copyOf(questionRepository.findAll().stream().map(QuestionMapper::mapToQuestionDto).toList()),
-                        List.copyOf(comboBoxOptionRepository.findAll().stream().map(ComboBoxOptionMapper::mapToComboBoxOptionDto).toList())
+                        List.copyOf(comboBoxOptionRepository.findAll().stream().map(ComboBoxOptionMapper::mapToComboBoxOptionDto).toList()),
+                        List.copyOf(checkBoxOptionRepository.findAll().stream().map(CheckBoxOptionMapper::mapToCheckBoxOptionDto).toList())
                         ))
                 .toList());
 

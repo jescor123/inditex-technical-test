@@ -14,6 +14,8 @@ public class QuestionMapper {
                 question.getDescription1(),
                 question.getAnswer(),
                 question.getDescription2(),
+                question.getUrlFileName(),
+                null,
                 null,
                 question.getLastUpdate()
         );
@@ -28,6 +30,7 @@ public class QuestionMapper {
                 questionDTO.getDescription1(),
                 questionDTO.getAnswer(),
                 questionDTO.getDescription2(),
+                questionDTO.getUrlFileName(),
                 questionDTO.getLastUpdate()
         );
 

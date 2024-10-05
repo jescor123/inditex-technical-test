@@ -16,7 +16,9 @@ public class QuestionDTO {
     private String description1;
     private String answer;
     private String description2;
+    private String urlFileName;
     private Set<ComboBoxOptionDTO> comboBoxOptionDTOSet;
+    private Set<CheckBoxOptionDTO> checkBoxOptionDTOSet;
     private Timestamp lastUpdate;
 
 }

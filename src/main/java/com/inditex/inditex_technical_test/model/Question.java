@@ -35,6 +35,9 @@ public class Question implements Serializable {
     @Column(name = "DESCRIPTION2")
     private String description2;
 
+    @Column(name = "URL_FILE_NAME")
+    private String urlFileName;
+
     @Column(name = "LAST_UPDATE")
     private Timestamp lastUpdate;
 
