@@ -12,6 +12,7 @@ import java.util.Set;
 @Data
 public class QuestionDTO {
     private long id;
+    private long idExercise;
     private long idCategory;
     private String description1;
     private String answer;

@@ -20,7 +20,7 @@ public class QuestionDataController {
         this.questionService = questionService;
     }
 
-    @PostMapping(value = "/load-format1-questions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/update-format1-questions", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponsePostDTO> setFormat1Questions(@RequestBody QuestionDTO questionDTO) {
         try {
 

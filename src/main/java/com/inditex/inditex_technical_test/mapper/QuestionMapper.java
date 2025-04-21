@@ -10,6 +10,7 @@ public class QuestionMapper {
 
         return new QuestionDTO(
                 question.getId(),
+                question.getIdExercise(),
                 question.getIdCategory(),
                 question.getDescription1(),
                 question.getAnswer(),
@@ -26,6 +27,7 @@ public class QuestionMapper {
 
         return new Question(
                 questionDTO.getId(),
+                1,
                 questionDTO.getIdCategory(),
                 questionDTO.getDescription1(),
                 questionDTO.getAnswer(),
